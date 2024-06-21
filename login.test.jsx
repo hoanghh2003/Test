@@ -109,7 +109,7 @@ describe('LoginPage', () => {
     });
     fireEvent.click(screen.getByText(/log in/i));
 
-    const errorMessage = await screen.findByText(/password must not exceed 15 characters/i);
+    const errorMessage = await screen.findByText(/password must not exceed 16 characters/i);
     expect(errorMessage).toBeInTheDocument();
   });
   
