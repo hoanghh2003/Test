@@ -26,9 +26,6 @@ describe('LoginPage', () => {
     });
     fireEvent.click(screen.getByText(/log in/i));
 
-    // Assert
-    // const successMessage = await screen.findByText(/login successfully/i);
-    // expect(successMessage).toBeInTheDocument();
   });
 
   it('should show error with invalid credentials', async () => {
@@ -51,9 +48,6 @@ describe('LoginPage', () => {
     });
     fireEvent.click(screen.getByText(/log in/i));
 
-    // Assert
-    // const errorMessage = await screen.findByText(/invalid credentials/i);
-    // expect(errorMessage).toBeInTheDocument();
   });
 
   it('should show error if email format is invalid', async () => {
@@ -98,5 +92,88 @@ describe('LoginPage', () => {
     // Assert
     const errorMessage = await screen.findByText(/password must be at least 6 characters long/i);
     expect(errorMessage).toBeInTheDocument();
+  });
+  
+
+  it('should show error if username is blank', async () => {
+    // Arrange
+    render(
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+
+    // Act
+    fireEvent.change(screen.getByPlaceholderText(/email/i), {
+      target: { value: '' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/password/i), {
+      target: { value: 'password' },
+    });
+    fireEvent.click(screen.getByText(/log in/i));
+
+    // Assert
+    const errorMessage = await screen.findByText(/username must not be blank/i);
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  it('should show error if password is blank', async () => {
+    // Arrange
+    render(
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+
+    // Act
+    fireEvent.change(screen.getByPlaceholderText(/email/i), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/password/i), {
+      target: { value: '' },
+    });
+    fireEvent.click(screen.getByText(/log in/i));
+
+    // Assert
+    const errorMessage = await screen.findByText(/password must not be blank/i);
+    expect(errorMessage).toBeInTheDocument();
+  });
+  it('should show error if both username and password are blank', async () => {
+    // Arrange
+    render(
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+
+    // Act
+    fireEvent.change(screen.getByPlaceholderText(/email/i), {
+      target: { value: '' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/password/i), {
+      target: { value: '' },
+    });
+    fireEvent.click(screen.getByText(/log in/i));
+
+    // Assert
+    const errorMessage = await screen.findByText(/username and password must not be blank/i);
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  it('should show error if user is already logged in', async () => {
+    // Arrange
+    localStorage.setItem('user-info', JSON.stringify({ user: 'test user' }));
+    render(
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+
+    // Assert
+    const loginError = await screen.findByText(/logined/i);
+    expect(loginError).toBeInTheDocument();
+
+    // Cleanup
+    localStorage.removeItem('user-info');
   });
 });

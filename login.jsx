@@ -85,7 +85,22 @@ const LoginPage = () => {
       event.preventDefault();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email format regex
       const minPasswordLength = 6; // Minimum length of the password
+      if (!email && !password) {
+        setError("Username and Password must not be blank");
+        setIsLoading(false);
+        return;
+      }
+      if (!email) {
+        setError("Username must not be blank");
+        setIsLoading(false);
+        return;
+      }
 
+      if (!password) {
+        setError("Password must not be blank");
+        setIsLoading(false);
+        return;
+      }
       if (!emailRegex.test(email)) {
         setError("Invalid email format");
         setIsLoading(false);
@@ -138,11 +153,11 @@ const LoginPage = () => {
     }
   }
   React.useEffect(() => {
-    localStorage.clear();
     const user = localStorage.getItem("user-info");
     if (user == null) {
       setIsLogin(true);
     } else {
+      setIsLoading(true);
       setIsLogin(false);
       setError("Logined");
     }
