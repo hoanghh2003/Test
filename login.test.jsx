@@ -31,7 +31,7 @@ describe('LoginPage', () => {
   it('should show error with invalid credentials', async () => {
     // Arrange
     axios.post.mockRejectedValue({
-      response: { data: { message: 'Invalid credentials' } },
+      response: { data: { message: 'Login failed. Please check your credentials.' } },
     });
     render(
       <Router>
@@ -105,11 +105,11 @@ describe('LoginPage', () => {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByPlaceholderText(/password/i), {
-      target: { value: 'thisisaverylongpassword' },
+      target: { value: 'thisisaverylongpasswordthisisaverylongpassword' },
     });
     fireEvent.click(screen.getByText(/log in/i));
 
-    const errorMessage = await screen.findByText(/password must not exceed 16 characters/i);
+    const errorMessage = await screen.findByText(/password must not exceed 30 characters/i);
     expect(errorMessage).toBeInTheDocument();
   });
   

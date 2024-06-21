@@ -85,7 +85,7 @@ const LoginPage = () => {
       event.preventDefault();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email format regex
       const minPasswordLength = 6; // Minimum length of the password
-      const maxPasswordLength = 16;
+      const maxPasswordLength = 30;
       if (!email && !password) {
         setError("Username and Password must not be blank");
         setIsLoading(false);
@@ -114,7 +114,7 @@ const LoginPage = () => {
         return false;
       }
       if (password.length > maxPasswordLength) {
-        setError("Password must not exceed 16 characters");
+        setError("Password must not exceed 30 characters");
         setIsLoading(false);
         return false;
       }
