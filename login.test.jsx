@@ -93,6 +93,25 @@ describe('LoginPage', () => {
     const errorMessage = await screen.findByText(/password must be at least 6 characters long/i);
     expect(errorMessage).toBeInTheDocument();
   });
+
+  it('should show error if password exceeds maximum length', async () => {
+    render(
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/email/i), {
+      target: { value: 'test@example.com' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/password/i), {
+      target: { value: 'thisisaverylongpassword' },
+    });
+    fireEvent.click(screen.getByText(/log in/i));
+
+    const errorMessage = await screen.findByText(/password must not exceed 15 characters/i);
+    expect(errorMessage).toBeInTheDocument();
+  });
   
 
   it('should show error if username is blank', async () => {
