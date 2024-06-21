@@ -241,12 +241,12 @@ function AccountSetting() {
                                     message: "Please input your new password!",
                                   },
                                   {
-                                    min: 8,
-                                    message: "Password must be at least 8 characters long!",
+                                    min: 6,
+                                    message: "Password must be at least 6 characters long!",
                                   },
                                   {
-                                    max: 15,
-                                    message: "Password must not exceed 15 characters!",
+                                    max: 30,
+                                    message: "Password must not exceed 30 characters!",
                                   },
                                 ]}
                                 className="form-password-toggle"
@@ -303,7 +303,7 @@ function AccountSetting() {
                             <Title level={6}>Password Requirements:</Title>
                             <ul className="ps-3 mb-0">
                               <li className="mb-1">
-                                Minimum 8 characters long - the more, the better
+                                Minimum 6 characters long - the more, the better
                               </li>
                               <li className="mb-1">
                                 At least one lowercase character

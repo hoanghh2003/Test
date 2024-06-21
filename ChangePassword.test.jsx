@@ -100,7 +100,7 @@ describe('ChangePassword', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Save changes/i }));
 
-    const errorMessage = await screen.findByText(/Password must be at least 8 characters long!/i);
+    const errorMessage = await screen.findByText(/Password must be at least 6 characters long!/i);
     expect(errorMessage).toBeInTheDocument();
   });
 
@@ -113,11 +113,11 @@ describe('ChangePassword', () => {
 
     fireEvent.change(screen.getByTestId('currentPassword'), { target: { value: 'correctpassword' } });
     fireEvent.change(screen.getByTestId('newPassword'), { target: { value: 'thisisaverylongpassword' } });
-    fireEvent.change(screen.getByTestId('confirmPassword'), { target: { value: 'thisisaverylongpassword' } });
+    fireEvent.change(screen.getByTestId('confirmPassword'), { target: { value: 'thisisaverylongpasswordthisisaverylongpassword' } });
 
     fireEvent.click(screen.getByRole('button', { name: /Save changes/i }));
 
-    const errorMessage = await screen.findByText(/Password must not exceed 15 characters/i);
+    const errorMessage = await screen.findByText(/Password must not exceed 30 characters/i);
     expect(errorMessage).toBeInTheDocument();
   });
 });
