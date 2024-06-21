@@ -2,8 +2,9 @@
 //   primary: "#060606",
 //   background: "#E0E0E0",
 //   disbaled: "#D9D9D9",
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import COVER_IMAGE from "../LoginPage/login.jpg";
+// import COVER_IMAGE from "../LoginPage/login.jpg";
 import { useState } from "react";
 import { message } from "antd";
 
@@ -15,56 +16,72 @@ const Register = () => {
   const [gender, setGender] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const [checkBox, setCheckBox] = useState(false);
   const navigate = useNavigate();
+
   async function handleRegister(event) {
     event.preventDefault();
 
-    // Biểu thức chính quy và các thông số
+    // Regular expressions and parameters
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const minPasswordLength = 6;
     const passwordRegex =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,30}$/;
 
-    const phoneRegex = /^0\d{9}$/; // Chỉnh regex cho số điện thoại Việt Nam
+    const phoneRegex = /^0\d{9}$/; // Adjust regex for Vietnamese phone number
     const genderRegex = /^(Male|Female|Other)$/i;
 
-    // Validate dữ liệu
+    // Validate data
+    if(!email){
+      setError("Please input email");
+      return;
+    }
     if (!emailRegex.test(email)) {
-      setError("Email không hợp lệ");
-      return; // Dừng hàm nếu có lỗi
+      setError("Invalid email format");
+      return; // Stop the function if there's an error
+    }
+    if (password.length < minPasswordLength) {
+      setError("Password must be at least 6 characters long");
+      return; // Stop the function if there's an error
+    }
+    if (password.length > 30) {
+      setError("Password must not exceed 30 characters");
+      return; // Stop the function if there's an error
     }
 
-    if (!passwordRegex.test(password) || password.length < minPasswordLength) {
+    if (!passwordRegex.test(password)) {
       setError(
-        "Mật khẩu không hợp lệ (tối thiểu 8 ký tự, chứa chữ hoa, chữ thường, số và ký tự đặc biệt)"
+        "Invalid password (must include uppercase, lowercase, number, and special character)"
       );
-      return; // Dừng hàm nếu có lỗi
+      return; // Stop the function if there's an error
     }
 
     if (!phoneRegex.test(phone)) {
-      setError("Số điện thoại không hợp lệ");
-      return; // Dừng hàm nếu có lỗi
+      setError("Invalid phone number");
+      return; // Stop the function if there's an error
     }
 
     if (!genderRegex.test(gender)) {
-      setError("Giới tính không hợp lệ");
-      return; // Dừng hàm nếu có lỗi
+      setError("Invalid gender");
+      return; // Stop the function if there's an error
+    }
+    if (!checkBox) {
+      setError("You must agree to the privacy policy and terms");
+      return;
     }
 
-    // Kiểm tra mật khẩu trùng khớp
-
-    // Chuẩn bị dữ liệu
+    // Prepare data
     const item = {
       email,
       password,
-      confirmPassword: password, // Không cần gửi lên server
-      fullName: first + last,
+      confirmPassword: password, // No need to send this to server
+      fullName: first + " " + last,
       gender,
       phoneNumber: phone,
     };
 
     try {
-      // Gọi API đăng ký
+      // Call the registration API
       const response = await fetch("https://localhost:7150/api/Auth/Register", {
         method: "POST",
         headers: {
@@ -74,31 +91,30 @@ const Register = () => {
         body: JSON.stringify(item),
       });
 
-      // Xử lý response từ API
+      // Handle response from API
       if (!response.ok) {
-        // Nếu đăng ký thất bại
-        const errorData = await response.json(); // Lấy thông tin lỗi từ response
-        setError(errorData.message || "Email is already Registered"); // Hiển thị thông báo lỗi
+        // If registration fails
+        const errorData = await response.json(); // Get error information from response
+        setError(errorData.message || "Email is already registered"); // Display error message
       } else {
-        // Nếu đăng ký thành công
-
+        // If registration is successful
         const result = await response.json();
         localStorage.setItem("user-info", JSON.stringify(result));
 
-        message.success("Register successfully");
-        navigate("/"); // Xóa thông báo lỗi nếu có
-        // history.push("/"); // Chuyển hướng về trang chủ
+        message.success("You Register successfully");
+
+        navigate("/"); // Clear error message if any
       }
     } catch (error) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại sau.");
-      console.error("Lỗi đăng ký:", error);
+      setError("An error occurred. Please try again later.");
+      console.error("Registration error:", error);
     }
   }
   return (
     <div className="w-700 h-screen flex items-start my-1 ">
       <div className="relative w-1/2 h-full flex flex-col">
         <img
-          src={COVER_IMAGE}
+          // src={COVER_IMAGE}
           className="h-full w-full object-cover bg-center"
         />
       </div>
@@ -178,6 +194,8 @@ const Register = () => {
                   type="checkbox"
                   id="terms-conditions"
                   name="terms"
+                  checked={checkBox}
+                  onChange={(e) => setCheckBox(e.target.checked)}
                 />
                 <label htmlFor="terms-conditions" className="text-[#060606]">
                   I agree to{" "}
