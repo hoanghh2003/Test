@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import LoginPage from '../Login';
+import LoginPage from './login';
 import { BrowserRouter as Router } from 'react-router-dom';
 import axios from 'axios';
 
