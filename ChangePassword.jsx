@@ -1,14 +1,15 @@
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Row, Col, Card, Typography, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { useState } from "react";
-const { Title } = Typography;
 import axios from "axios";
+
+const { Title } = Typography;
 
 function AccountSetting() {
   const [form] = Form.useForm();
-  const [passwordForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
   const handleChangePassword = async (values) => {
     setLoading(true);
     try {
@@ -25,7 +26,7 @@ function AccountSetting() {
       const apiUrl = `https://localhost:7150/api/Auth/change-password`;
       const data = {
         email: userInfo.data.user.email,
-        currentPassword: values.oldPassword,
+        currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       };
 
@@ -41,10 +42,10 @@ function AccountSetting() {
 
       if (response.status === 200) {
         message.success("Password changed successfully");
-        passwordForm.resetFields([
-          "oldPassword",
+        form.resetFields([
+          "currentPassword",
           "newPassword",
-          "confirmNewPassword",
+          "confirmPassword",
         ]);
       } else {
         message.error(response.data.message || "Error changing password");
@@ -55,16 +56,15 @@ function AccountSetting() {
         localStorage.removeItem("user-info"); // Clear expired token
         window.location.href = "/login"; // Redirect to login page
       } else {
-        console.error("API error:", error);
-        message.error("Current password wrong to change");
+        message.error(error.response?.data?.message || "Current password wrong to change");
       }
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div>
-      {/* Core CSS */}
       <link
         rel="stylesheet"
         href="src/assets/vendor/css/rtl/core.css"
@@ -75,7 +75,6 @@ function AccountSetting() {
         href="src/assets/vendor/css/rtl/theme-default.css"
         className="template-customizer-theme-css"
       />
-      {/* Page CSS */}
       <link
         rel="stylesheet"
         href="src/assets/vendor/css/pages/page-account-settings.css"
@@ -110,7 +109,7 @@ function AccountSetting() {
                       <div className="avatar avatar-online">
                         <img
                           src="src/assets/images/avatars/1.png"
-                          alt
+                          alt="User avatar"
                           className="h-auto rounded-circle"
                         />
                       </div>
@@ -123,7 +122,7 @@ function AccountSetting() {
                               <div className="avatar avatar-online">
                                 <img
                                   src="src/assets/images/avatars/1.png"
-                                  alt
+                                  alt="User avatar"
                                   className="h-auto rounded-circle"
                                 />
                               </div>
@@ -212,13 +211,13 @@ function AccountSetting() {
                                 rules={[
                                   {
                                     required: true,
-                                    message:
-                                      "Please input your current password!",
+                                    message: "Please input your current password!",
                                   },
                                 ]}
                                 className="form-password-toggle"
                               >
                                 <Input.Password
+                                  data-testid="currentPassword"
                                   placeholder="············"
                                   iconRender={(visible) =>
                                     visible ? (
@@ -241,10 +240,19 @@ function AccountSetting() {
                                     required: true,
                                     message: "Please input your new password!",
                                   },
+                                  {
+                                    min: 8,
+                                    message: "Password must be at least 8 characters long!",
+                                  },
+                                  {
+                                    max: 15,
+                                    message: "Password must not exceed 15 characters!",
+                                  },
                                 ]}
                                 className="form-password-toggle"
                               >
                                 <Input.Password
+                                  data-testid="newPassword"
                                   placeholder="············"
                                   iconRender={(visible) =>
                                     visible ? (
@@ -260,16 +268,25 @@ function AccountSetting() {
                               <Form.Item
                                 label="Confirm New Password"
                                 name="confirmPassword"
+                                dependencies={['newPassword']}
                                 rules={[
                                   {
                                     required: true,
-                                    message:
-                                      "Please confirm your new password!",
+                                    message: "Please confirm your new password!",
                                   },
+                                  ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                      if (!value || getFieldValue('newPassword') === value) {
+                                        return Promise.resolve();
+                                      }
+                                      return Promise.reject(new Error('The two passwords do not match!'));
+                                    },
+                                  }),
                                 ]}
                                 className="form-password-toggle"
                               >
                                 <Input.Password
+                                  data-testid="confirmPassword"
                                   placeholder="············"
                                   iconRender={(visible) =>
                                     visible ? (
@@ -292,8 +309,7 @@ function AccountSetting() {
                                 At least one lowercase character
                               </li>
                               <li>
-                                At least one number, symbol, or whitespace
-                                character
+                                At least one number, symbol, or whitespace character
                               </li>
                             </ul>
                           </div>

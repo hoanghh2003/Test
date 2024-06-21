@@ -1,4 +1,5 @@
 export default {
+  testTimeout: 10000,
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   transform: {

@@ -13,7 +13,7 @@ import Service_Details from "./components/Service/Service_Details";
 import Cart from "./components/Cart/Cart";
 import MainLayout from "./layout/MainLayout";
 import Account from "./components/Account/Account";
-import AccountSetting from "./components/Account/AccountSetting";
+import AccountSetting from "../ChangePassword";
 import PrivacyPolicyTerms from "./components/Register/policy";
 import Logout from "./components/Logout/logout";
 import Transac from "./components/Service/transac";
