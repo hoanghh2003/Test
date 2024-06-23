@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChangePassword from './ChangePassword';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -112,12 +112,12 @@ describe('ChangePassword', () => {
     );
 
     fireEvent.change(screen.getByTestId('currentPassword'), { target: { value: 'correctpassword' } });
-    fireEvent.change(screen.getByTestId('newPassword'), { target: { value: 'thisisaverylongpassword' } });
-    fireEvent.change(screen.getByTestId('confirmPassword'), { target: { value: 'thisisaverylongpasswordthisisaverylongpassword' } });
+    fireEvent.change(screen.getByTestId('newPassword'), { target: { value: 'thisisaverylongpangpangpasswordthisisaverylongpassword' } });
+    fireEvent.change(screen.getByTestId('confirmPassword'), { target: { value: 'thisisaverylongpangpangpasswordthisisaverylongpassword' } });
 
     fireEvent.click(screen.getByRole('button', { name: /Save changes/i }));
 
-    const errorMessage = await screen.findByText(/Password must not exceed 30 characters/i);
+    const errorMessage = await screen.findByText(/Password must not exceed 30 characters!/i);
     expect(errorMessage).toBeInTheDocument();
   });
 });
